@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JD Manager</title>
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+  <script defer src="app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #121212;
+      color: white;
+      text-align: center;
+    }
+    header {
+      background: #1b1b1b;
+      padding: 1rem;
+      color: #2ecc71;
+      font-size: 1.8rem;
+      font-family: "Segoe Script", cursive;
+    }
+    .container {
+      margin-top: 2rem;
+    }
+    .btn {
+      background: #2ecc71;
+      border: none;
+      padding: 1rem 2rem;
+      color: white;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin: 1rem;
+    }
+    table {
+      width: 90%;
+      margin: 1rem auto;
+      border-collapse: collapse;
+      background: #1e1e1e;
+    }
+    th, td {
+      border: 1px solid #2ecc71;
+      padding: 0.5rem;
+    }
+    .search-bar {
+      margin: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      width: 50%;
+    }
+  </style>
+</head>
+<body>
+  <header>JD Manager</header>
+  <div id="login-screen" class="container">
+    <button id="login-btn" class="btn">Accedi con Google</button>
+  </div>
+  <div id="home-screen" class="container" style="display:none;">
+    <h2>Benvenuto in JD Manager</h2>
+    <button class="btn" onclick="openSection('magazzino')">Magazzino</button>
+    <button class="btn" onclick="openSection('assemblaggio')">Assemblaggio</button>
+  </div>
+  <div id="table-screen" class="container" style="display:none;">
+    <input id="search" class="search-bar" placeholder="Cerca ordine o cliente...">
+    <table id="order-table">
+      <thead><tr id="table-header"></tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <button class="btn" onclick="backHome()">Torna alla Home</button>
+  </div>
+</body>
+</html>

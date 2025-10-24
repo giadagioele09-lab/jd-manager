@@ -1,0 +1,78 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCppFhxRO8NatltrmBXqUXGj-cWG5X8wdU",
+  authDomain: "jd-manager-quello-definitivo.firebaseapp.com",
+  projectId: "jd-manager-quello-definitivo",
+  storageBucket: "jd-manager-quello-definitivo.firebasestorage.app",
+  messagingSenderId: "412067831707",
+  appId: "1:412067831707:web:4b61a8a3c0477cc830cb3e",
+  measurementId: "G-ZBSRRHKT6G"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const loginBtn = document.getElementById("login-btn");
+const loginScreen = document.getElementById("login-screen");
+const homeScreen = document.getElementById("home-screen");
+const tableScreen = document.getElementById("table-screen");
+let currentUser = null;
+let currentSection = null;
+
+loginBtn.onclick = async () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const result = await auth.signInWithPopup(provider);
+    currentUser = result.user;
+    loginScreen.style.display = "none";
+    homeScreen.style.display = "block";
+  } catch (err) {
+    alert("Errore login: " + err.message);
+  }
+};
+
+function openSection(section) {
+  currentSection = section;
+  homeScreen.style.display = "none";
+  tableScreen.style.display = "block";
+  buildTable(section);
+}
+
+function backHome() {
+  tableScreen.style.display = "none";
+  homeScreen.style.display = "block";
+}
+
+function buildTable(section) {
+  const tableHeader = document.getElementById("table-header");
+  const tableBody = document.getElementById("table-body");
+  tableHeader.innerHTML = "";
+  tableBody.innerHTML = "";
+
+  let headers = [];
+  if (section === "magazzino") {
+    headers = ["Codice Ordine", "Stato 1", "Stato 2", "Cliente", "Formato", "Tipologia"];
+  } else {
+    headers = ["Codice Ordine", "Stato 1", "Stato 2", "Cliente", "Formato"];
+  }
+
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    tableHeader.appendChild(th);
+  });
+
+  const row = document.createElement("tr");
+  headers.forEach(h => {
+    const td = document.createElement("td");
+    td.contentEditable = true;
+    td.onclick = () => {
+      if (section === "magazzino" && (h === "Stato 1" || h === "Stato 2")) {
+        td.style.background = td.style.background === "yellow" ? "limegreen" : "yellow";
+      }
+      if (section === "assemblaggio" && (h === "Stato 1" || h === "Stato 2")) {
+        td.style.background = td.style.background === "red" ? "orange" : "red";
+      }
+    };
+    row.appendChild(td);
+  });
+  tableBody.appendChild(row);
+}

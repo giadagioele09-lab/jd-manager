@@ -1,0 +1,9 @@
+{
+  "name": "JD Manager",
+  "short_name": "JDManager",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#2ecc71",
+  "icons": []
+}
