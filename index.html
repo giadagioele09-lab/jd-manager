@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JD Manager</title>
+  <style>
+    body {
+      background-color: #0f1410;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #1db954;
+      font-size: 2.5rem;
+      font-family: 'Segoe UI', cursive;
+    }
+    .button-container {
+      margin-top: 50px;
+    }
+    .button {
+      background-color: #1db954;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      margin: 10px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .button:hover {
+      background-color: #18a048;
+    }
+  </style>
+</head>
+<body>
+  <h1>JD Manager</h1>
+  <p>Seleziona una sezione per iniziare</p>
+  <div class="button-container">
+    <button class="button" onclick="window.location.href='magazzino.html'">Magazzino</button>
+    <button class="button" onclick="window.location.href='assemblaggio.html'">Assemblaggio</button>
+  </div>
+</body>
+</html>
