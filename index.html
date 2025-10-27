@@ -36,6 +36,22 @@
     }
   </style>
 </head>
+<!-- Pulsante Login con Google -->
+<script type="module">
+  import { signInWithGoogle } from "./firebase.js";
+  window.signInWithGoogle = signInWithGoogle;
+</script>
+
+<button onclick="signInWithGoogle()" style="
+  background:#1db954;
+  border:none;
+  padding:12px 20px;
+  border-radius:10px;
+  color:white;
+  font-size:1.1rem;
+  cursor:pointer;
+  margin-top:25px;
+">🔐 Accedi con Google</button>
 <body>
   <h1>JD Manager</h1>
   <p>Seleziona una sezione per iniziare</p>
