@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD Manager - Magazzino</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #1db954;
+      color: white;
+    }
+    .state1 { background-color: white; cursor: pointer; }
+    .state2 { background-color: white; cursor: pointer; }
+    input { width: 95%; padding: 5px; border: none; border-radius: 5px; }
+    .search-bar {
+      margin: 20px auto;
+      text-align: center;
+    }
+    .search-bar input {
+      width: 250px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>📦 Magazzino</header>
+  <main>
+    <div class="search-bar">
+      🔍 <input type="text" id="search" placeholder="Cerca per codice o cliente..." onkeyup="searchTable()">
+    </div>
+    <table id="magazzinoTable">
+      <thead>
+        <tr>
+          <th>Codice Ordine</th>
+          <th>Stato 1</th>
+          <th>Stato 2</th>
+          <th>Nome Cliente</th>
+          <th>Formato Ordine</th>
+          <th>Tipologia Merce</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="addRow()">➕ Aggiungi Ordine</button>
+  </main>
+
+  <script>
+    const table = document.querySelector("#magazzinoTable tbody");
+    const saved = JSON.parse(localStorage.getItem("magazzinoData")) || [];
+    saved.forEach(addRowFromData);
+
+    function addRowFromData(data) {
+      const row = table.insertRow();
+      row.insertCell().innerHTML = `<input value="${data.codice || ''}" oninput="saveData()">`;
+      const s1 = row.insertCell();
+      s1.className = 'state1';
+      s1.style.backgroundColor = data.s1 || 'white';
+      s1.onclick = () => toggleState(s1, ['white','yellow']);
+      const s2 = row.insertCell();
+      s2.className = 'state2';
+      s2.style.backgroundColor = data.s2 || 'white';
+      s2.onclick = () => toggleState(s2, ['white','green']);
+      row.insertCell().innerHTML = `<input value="${data.cliente || ''}" oninput="saveData()">`;
+      row.insertCell().innerHTML = `<input value="${data.formato || ''}" oninput="saveData()">`;
+      const tipCell = row.insertCell();
+      tipCell.innerHTML = `<input value="${data.tipologia || ''}" oninput="colorTip(this)">`;
+      colorTip(tipCell.firstChild);
+    }
+
+    function addRow() {
+      addRowFromData({});
+      saveData();
+    }
+
+    function toggleState(cell, colors) {
+      const next = colors[(colors.indexOf(cell.style.backgroundColor) + 1) % colors.length];
+      cell.style.backgroundColor = next;
+      saveData();
+    }
+
+    function colorTip(input) {
+      const val = input.value.toLowerCase();
+      let color = 'white';
+      if (val.includes('bloom')) color = 'cyan';
+      if (val.includes('fotolibro')) color = 'lightgreen';
+      if (val.includes('kit smart')) color = '#e4d96f';
+      if (val.includes('ottawa')) color = 'fuchsia';
+      input.style.backgroundColor = color;
+      saveData();
+    }
+
+    function saveData() {
+      const rows = table.querySelectorAll("tr");
+      const all = Array.from(rows).map(r => ({
+        codice: r.cells[0].querySelector('input').value,
+        s1: r.cells[1].style.backgroundColor,
+        s2: r.cells[2].style.backgroundColor,
+        cliente: r.cells[3].querySelector('input').value,
+        formato: r.cells[4].querySelector('input').value,
+        tipologia: r.cells[5].querySelector('input').value
+      }));
+      localStorage.setItem("magazzinoData", JSON.stringify(all));
+    }
+
+    function searchTable() {
+      const term = document.getElementById("search").value.toLowerCase();
+      const rows = table.querySelectorAll("tr");
+      rows.forEach(r => {
+        const codice = r.cells[0].querySelector('input').value.toLowerCase();
+        const cliente = r.cells[3].querySelector('input').value.toLowerCase();
+        r.style.display = codice.includes(term) || cliente.includes(term) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
