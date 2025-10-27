@@ -22,11 +22,13 @@ export async function signInWithGoogle() {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+
+    // Mostra a schermo chi è loggato
     alert("Accesso eseguito come: " + user.email);
     localStorage.setItem("loggedUser", user.email);
 
     // Controllo ruolo
-    if (user.email === "maslowgiady1309@gmail.com") {
+    if (user.email.trim().toLowerCase() === "maslowgiady1309@gmail.com") {
       localStorage.setItem("role", "master");
       alert("Benvenuta, Master!");
     } else {
@@ -34,8 +36,10 @@ export async function signInWithGoogle() {
       alert("Accesso come Operatore limitato.");
     }
 
+    // Torna alla home
     window.location.href = "index.html";
   } catch (error) {
+    console.error(error);
     alert("Errore durante il login: " + error.message);
   }
 }
