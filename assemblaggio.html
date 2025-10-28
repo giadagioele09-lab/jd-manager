@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getDatabase, ref, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push, update, remove, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCppFhxRO8NatltrmBXqUXGj-cWG5X8wdU",
@@ -23,7 +23,9 @@
     const db = getDatabase(app);
     const tableBody = document.getElementById("tableBody");
     const ordersRef = ref(db, "assemblaggio");
+    const archiveRef = ref(db, "archivio/assemblaggio");
 
+    // Aggiornamento in tempo reale
     onValue(ordersRef, snapshot => {
       tableBody.innerHTML = "";
       const data = snapshot.val() || {};
@@ -58,6 +60,7 @@
       tableBody.appendChild(row);
     }
 
+    // Aggiunge nuovo ordine
     window.addRow = function() {
       push(ordersRef, {
         codice: "",
@@ -68,6 +71,7 @@
       });
     };
 
+    // Aggiornamento con debounce
     const pendingUpdates = {};
     window.updateOrder = function(id, field, value) {
       if (pendingUpdates[id + field]) clearTimeout(pendingUpdates[id + field]);
@@ -77,13 +81,34 @@
       }, 500);
     };
 
+    // Cambia stato + archivia automaticamente se necessario
     window.toggleState = function(id, field, cell, colors) {
       const next = colors[(colors.indexOf(cell.style.backgroundColor) + 1) % colors.length];
       cell.style.backgroundColor = next;
       const orderRef = ref(db, `assemblaggio/${id}`);
       update(orderRef, { [field]: next });
+
+      // Archiviazione automatica
+      if (field === "s2" && next === "orange") {
+        moveToArchive(id);
+      }
     };
 
+    // Sposta in archivio
+    function moveToArchive(id) {
+      const orderRef = ref(db, `assemblaggio/${id}`);
+      onValue(orderRef, snapshot => {
+        const ordine = snapshot.val();
+        if (ordine) {
+          const newRef = push(archiveRef);
+          set(newRef, ordine);
+          remove(orderRef);
+          alert(`Ordine ${ordine.codice || ""} archiviato ✅`);
+        }
+      }, { onlyOnce: true });
+    }
+
+    // Ricerca
     window.searchTable = function() {
       const term = document.getElementById("search").value.toLowerCase();
       const rows = tableBody.querySelectorAll("tr");
