@@ -6,11 +6,9 @@
   <title>JD Manager - Magazzino</title>
   <link rel="stylesheet" href="style.css">
   <script type="module">
-    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import { getDatabase, ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-    // Configurazione JD Manager
     const firebaseConfig = {
       apiKey: "AIzaSyCppFhxRO8NatltrmBXqUXGj-cWG5X8wdU",
       authDomain: "jd-manager-quello-definitivo.firebaseapp.com",
@@ -21,20 +19,17 @@
       appId: "1:412067831707:web:4b61a8a3c0477cc830cb3e"
     };
 
-    // Inizializza Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const tableBody = document.getElementById("tableBody");
     const ordersRef = ref(db, "magazzino");
 
-    // Quando i dati cambiano, aggiorna la tabella
     onValue(ordersRef, snapshot => {
       tableBody.innerHTML = "";
       const data = snapshot.val() || {};
       Object.entries(data).forEach(([id, ordine]) => addRowFromData(id, ordine));
     });
 
-    // Aggiunge una riga dalla memoria del DB
     function addRowFromData(id, ordine) {
       const row = document.createElement("tr");
 
@@ -68,7 +63,6 @@
       tableBody.appendChild(row);
     }
 
-    // Aggiungi nuovo ordine
     window.addRow = function() {
       push(ordersRef, {
         codice: "",
@@ -80,13 +74,15 @@
       });
     };
 
-    // Aggiorna un campo dell'ordine
+    const pendingUpdates = {};
     window.updateOrder = function(id, field, value) {
-      const orderRef = ref(db, `magazzino/${id}`);
-      update(orderRef, { [field]: value });
+      if (pendingUpdates[id + field]) clearTimeout(pendingUpdates[id + field]);
+      pendingUpdates[id + field] = setTimeout(() => {
+        const orderRef = ref(db, `magazzino/${id}`);
+        update(orderRef, { [field]: value });
+      }, 500);
     };
 
-    // Cambia stato con clic
     window.toggleState = function(id, field, cell, colors) {
       const next = colors[(colors.indexOf(cell.style.backgroundColor) + 1) % colors.length];
       cell.style.backgroundColor = next;
@@ -94,7 +90,6 @@
       update(orderRef, { [field]: next });
     };
 
-    // Colore automatico per tipologia
     window.colorTip = function(input) {
       const val = input.value.toLowerCase();
       let color = "white";
@@ -105,7 +100,6 @@
       input.style.backgroundColor = color;
     };
 
-    // Ricerca
     window.searchTable = function() {
       const term = document.getElementById("search").value.toLowerCase();
       const rows = tableBody.querySelectorAll("tr");
@@ -140,3 +134,4 @@
   </main>
 </body>
 </html>
+
