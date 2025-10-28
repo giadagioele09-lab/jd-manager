@@ -1,63 +1,88 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JD Manager</title>
   <style>
     body {
-      background-color: #0f1410;
-      color: white;
-      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: #0b0f0d;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
-      padding: 40px;
     }
+
+    header {
+      margin-bottom: 40px;
+    }
+
     h1 {
-      color: #1db954;
       font-size: 2.5rem;
-      font-family: 'Segoe UI', cursive;
+      color: #1db954;
+      font-weight: 600;
+      letter-spacing: 1px;
     }
-    .button-container {
-      margin-top: 50px;
+
+    .logo {
+      font-size: 3rem;
+      color: #1db954;
+      font-weight: bold;
+      font-family: "Segoe UI", sans-serif;
     }
-    .button {
-      background-color: #1db954;
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      margin: 10px;
-      font-size: 1.2rem;
-      border-radius: 12px;
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 800px;
+    }
+
+    .icon {
+      background-color: #101613;
+      border: 2px solid #1db954;
+      border-radius: 20px;
+      padding: 25px;
+      font-size: 1.1rem;
+      color: #ffffff;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-    .button:hover {
-      background-color: #18a048;
+
+    .icon:hover {
+      background-color: #1db954;
+      color: #0b0f0d;
+      transform: translateY(-5px);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.9rem;
+      color: #888;
     }
   </style>
 </head>
-<!-- Pulsante Login con Google -->
-<script type="module">
-  import { signInWithGoogle } from "./firebase.js";
-  window.signInWithGoogle = signInWithGoogle;
-</script>
-
-<button onclick="signInWithGoogle()" style="
-  background:#1db954;
-  border:none;
-  padding:12px 20px;
-  border-radius:10px;
-  color:white;
-  font-size:1.1rem;
-  cursor:pointer;
-  margin-top:25px;
-">🔐 Accedi con Google</button>
 <body>
-  <h1>JD Manager</h1>
-  <p>Seleziona una sezione per iniziare</p>
-  <div class="button-container">
-    <button class="button" onclick="window.location.href='magazzino.html'">Magazzino</button>
-    <button class="button" onclick="window.location.href='assemblaggio.html'">Assemblaggio</button>
-  </div>
+  <header>
+    <div class="logo">JD Manager</div>
+    <h1>Gestione Ordini</h1>
+  </header>
+
+  <main class="container">
+    <div class="icon" onclick="window.location='magazzino.html'">📦 Magazzino</div>
+    <div class="icon" onclick="window.location='assemblaggio.html'">🛠️ Assemblaggio</div>
+    <div class="icon" onclick="window.location='archivio_magazzino.html'">📁 Archivio Magazzino</div>
+    <div class="icon" onclick="window.location='archivio_assemblaggio.html'">📁 Archivio Assemblaggio</div>
+  </main>
+
+  <footer>© 2025 JD Manager — powered by Jade 💚</footer>
 </body>
 </html>
