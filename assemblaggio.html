@@ -20,9 +20,15 @@
       background-color: #1db954;
       color: white;
     }
-    .state1 { background-color: white; cursor: pointer; }
-    .state2 { background-color: white; cursor: pointer; }
-    input { width: 95%; padding: 5px; border: none; border-radius: 5px; }
+    .state1, .state2 {
+      cursor: pointer;
+    }
+    input {
+      width: 95%;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+    }
     .search-bar {
       margin: 20px auto;
       text-align: center;
@@ -51,37 +57,78 @@
           <th>Formato Ordine</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="tableBody"></tbody>
     </table>
     <button onclick="addRow()">➕ Aggiungi Ordine</button>
   </main>
 
   <script>
-    const table = document.querySelector("#assemblaggioTable tbody");
-    const saved = JSON.parse(localStorage.getItem("assemblaggioData")) || [];
-    saved.forEach(addRowFromData);
+    const tableBody = document.getElementById("tableBody");
+    const savedData = JSON.parse(localStorage.getItem("assemblaggioData")) || [];
+    savedData.forEach(addRowFromData);
 
-    function addRowFromData(data) {
-      const row = table.insertRow();
-      row.insertCell().innerHTML = `<input value="${data.codice || ''}" oninput="saveData()">`;
-      const s1 = row.insertCell();
-      s1.className = 'state1';
-      s1.style.backgroundColor = data.s1 || 'white';
-      s1.onclick = () => toggleState(s1, ['white','red']);
-      const s2 = row.insertCell();
-      s2.className = 'state2';
-      s2.style.backgroundColor = data.s2 || 'white';
-      s2.onclick = () => toggleState(s2, ['white','orange']);
-      row.insertCell().innerHTML = `<input value="${data.cliente || ''}" oninput="saveData()">`;
-      row.insertCell().innerHTML = `<input value="${data.formato || ''}" oninput="saveData()">`;
+    function addRowFromData(data = {}) {
+      const row = document.createElement("tr");
+
+      const codice = document.createElement("td");
+      codice.innerHTML = `<input value="${data.codice || ''}" oninput="saveData()">`;
+      row.appendChild(codice);
+
+      const s1 = document.createElement("td");
+      s1.className = "state1";
+      s1.style.backgroundColor = data.s1 || "white";
+      s1.onclick = () => toggleState(s1, ["white", "red"]);
+      row.appendChild(s1);
+
+      const s2 = document.createElement("td");
+      s2.className = "state2";
+      s2.style.backgroundColor = data.s2 || "white";
+      s2.onclick = () => toggleState(s2, ["white", "orange"]);
+      row.appendChild(s2);
+
+      const cliente = document.createElement("td");
+      cliente.innerHTML = `<input value="${data.cliente || ''}" oninput="saveData()">`;
+      row.appendChild(cliente);
+
+      const formato = document.createElement("td");
+      formato.innerHTML = `<input value="${data.formato || ''}" oninput="saveData()">`;
+      row.appendChild(formato);
+
+      tableBody.appendChild(row);
+      saveData();
     }
 
     function addRow() {
       addRowFromData({});
-      saveData();
     }
 
     function toggleState(cell, colors) {
       const next = colors[(colors.indexOf(cell.style.backgroundColor) + 1) % colors.length];
       cell.style.backgroundColor = next;
       saveData();
+    }
+
+    function saveData() {
+      const rows = tableBody.querySelectorAll("tr");
+      const all = Array.from(rows).map(r => ({
+        codice: r.cells[0].querySelector('input').value,
+        s1: r.cells[1].style.backgroundColor,
+        s2: r.cells[2].style.backgroundColor,
+        cliente: r.cells[3].querySelector('input').value,
+        formato: r.cells[4].querySelector('input').value
+      }));
+      localStorage.setItem("assemblaggioData", JSON.stringify(all));
+    }
+
+    function searchTable() {
+      const term = document.getElementById("search").value.toLowerCase();
+      const rows = tableBody.querySelectorAll("tr");
+      rows.forEach(r => {
+        const codice = r.cells[0].querySelector('input').value.toLowerCase();
+        const cliente = r.cells[3].querySelector('input').value.toLowerCase();
+        r.style.display = codice.includes(term) || cliente.includes(term) ? "" : "none";
+      });
+    }
+  </script>
+</body>
+</html>
