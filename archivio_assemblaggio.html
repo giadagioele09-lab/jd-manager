@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archivio Assemblaggio - JD Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCppFhxRO8NatltrmBXqUXGj-cWG5X8wdU",
+      authDomain: "jd-manager-quello-definitivo.firebaseapp.com",
+      databaseURL: "https://jd-manager-quello-definitivo-default-rtdb.europe-west1.firebasedatabase.app/",
+      projectId: "jd-manager-quello-definitivo",
+      storageBucket: "jd-manager-quello-definitivo.firebasestorage.app",
+      messagingSenderId: "412067831707",
+      appId: "1:412067831707:web:4b61a8a3c0477cc830cb3e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const tableBody = document.getElementById("tableBody");
+    const archiveRef = ref(db, "archivio/assemblaggio");
+
+    // Carica archivio
+    onValue(archiveRef, snapshot => {
+      tableBody.innerHTML = "";
+      const data = snapshot.val() || {};
+      Object.values(data).forEach(ordine => addRow(ordine));
+    });
+
+    function addRow(ordine) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${ordine.codice || ""}</td>
+        <td>${ordine.cliente || ""}</td>
+        <td>${ordine.formato || ""}</td>
+      `;
+      tableBody.appendChild(row);
+    }
+
+    window.searchArchive = function() {
+      const term = document.getElementById("search").value.toLowerCase();
+      const rows = tableBody.querySelectorAll("tr");
+      rows.forEach(r => {
+        const codice = r.cells[0].textContent.toLowerCase();
+        const cliente = r.cells[1].textContent.toLowerCase();
+        r.style.display = codice.includes(term) || cliente.includes(term) ? "" : "none";
+      });
+    };
+  </script>
+</head>
+<body>
+  <header>📁 Archivio Assemblaggio</header>
+  <main>
+    <div class="search-bar">
+      🔍 <input type="text" id="search" placeholder="Cerca per codice o cliente..." onkeyup="searchArchive()">
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Codice Ordine</th>
+          <th>Cliente</th>
+          <th>Formato</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </main>
+</body>
+</html>
